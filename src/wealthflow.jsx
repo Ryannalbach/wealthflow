@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Trash2, DollarSign, PieChart, TrendingUp, TrendingDown, Wallet, AlertCircle, Save } from 'lucide-react';
+import { 
+  Plus, Trash2, DollarSign, PieChart, TrendingUp, TrendingDown, 
+  Wallet, AlertCircle, Save, Calculator, Home, Calendar, ArrowRight
+} from 'lucide-react';
 
 // --- Components ---
 

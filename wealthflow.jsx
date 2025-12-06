@@ -215,7 +215,7 @@ const BudgetDashboard = () => {
     { label: 'Expenses', value: totals.expenses, color: '#f59e0b' },
     { label: 'Savings', value: totals.savings, color: '#3b82f6' },
     { label: 'Investments', value: totals.investments, color: '#10b981' },
-  ];
+  ].filter(item => item.value > 0);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

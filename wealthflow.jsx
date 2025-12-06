@@ -673,11 +673,12 @@ export default function WealthFlowCalculator() {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url(https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&h=900&fit=crop)',
+          backgroundImage: 'url(https://images.unsplash.com/photo-1464207687429-7505649dae38?w=1600&h=900&fit=crop)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
           transform: `translateY(${scrollY * 0.5}px)`,
+          filter: 'blur(8px)',
         }}
       >
         {/* Overlay for readability */}

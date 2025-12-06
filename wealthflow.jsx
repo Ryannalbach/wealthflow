@@ -448,26 +448,60 @@ const MortgageCalculator = () => {
   const results = useMemo(() => {
     const principal = values.price - values.downPayment;
     const r = values.rate / 100 / 12;
-    const n = values.years * 12;
+    const baseN = values.years * 12;
     
     // Mortgage Formula: M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
     let monthlyPayment = r === 0 
-      ? principal / n 
-      : principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      ? principal / baseN 
+      : principal * (r * Math.pow(1 + r, baseN)) / (Math.pow(1 + r, baseN) - 1);
+    
+    let n = baseN;
+    let totalPaid;
+    let totalInterest;
+    let payoffDate;
     
     // Override with custom payment if enabled
     if (useCustomPayment && customPayment) {
       monthlyPayment = customPayment;
-    }
       
-    const totalPaid = monthlyPayment * n;
-    const totalInterest = totalPaid - principal;
-    
-    // Payoff Date
-    const today = new Date();
-    const payoffDate = new Date(today.setMonth(today.getMonth() + n));
+      // Calculate payoff time with custom payment
+      if (monthlyPayment <= 0) {
+        totalPaid = 0;
+        totalInterest = 0;
+        payoffDate = new Date();
+      } else if (r === 0) {
+        // No interest - simple division
+        n = Math.ceil(principal / monthlyPayment);
+        totalPaid = monthlyPayment * n;
+        totalInterest = 0;
+        const today = new Date();
+        payoffDate = new Date(today.setMonth(today.getMonth() + n));
+      } else {
+        // Calculate months needed: n = -log(1 - (P*i)/M) / log(1 + i)
+        const numerator = 1 - (principal * r) / monthlyPayment;
+        if (numerator <= 0) {
+          // Payment doesn't cover interest
+          totalPaid = 0;
+          totalInterest = 0;
+          payoffDate = new Date();
+        } else {
+          n = -Math.log(numerator) / Math.log(1 + r);
+          n = Math.ceil(n);
+          totalPaid = monthlyPayment * n;
+          totalInterest = totalPaid - principal;
+          const today = new Date();
+          payoffDate = new Date(today.setMonth(today.getMonth() + n));
+        }
+      }
+    } else {
+      // Standard calculation with original term
+      totalPaid = monthlyPayment * n;
+      totalInterest = totalPaid - principal;
+      const today = new Date();
+      payoffDate = new Date(today.setMonth(today.getMonth() + n));
+    }
 
-    return { monthlyPayment, totalInterest, totalPaid, principal, payoffDate };
+    return { monthlyPayment, totalInterest, totalPaid, principal, payoffDate, months: n };
   }, [values, useCustomPayment, customPayment]);
 
   const InputField = ({ label, value, field, prefix = null, suffix = null }) => (

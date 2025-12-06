@@ -521,9 +521,31 @@ const MortgageCalculator = () => {
            </Card>
         </div>
 
-        <Card className="p-6">
-          <h4 className="font-semibold text-slate-700 mb-4">Payment Breakdown</h4>
-          <div className="w-full h-8 bg-slate-100 rounded-full overflow-hidden flex">
+        <Card className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200">
+          <h4 className="font-semibold text-slate-700 mb-6">Monthly Payment Breakdown</h4>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-white p-4 rounded-lg border border-slate-200">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Principal Payment</span>
+              <div className="text-2xl font-bold text-blue-600 mt-2">
+                ${Math.round(results.monthlyPayment * (results.principal / results.totalPaid)).toLocaleString()}
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-slate-200">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Interest Payment</span>
+              <div className="text-2xl font-bold text-rose-500 mt-2">
+                ${Math.round(results.monthlyPayment * (results.totalInterest / results.totalPaid)).toLocaleString()}
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-slate-200">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Monthly</span>
+              <div className="text-2xl font-bold text-slate-800 mt-2">
+                ${Math.round(results.monthlyPayment).toLocaleString()}
+              </div>
+            </div>
+          </div>
+          
+          <h5 className="font-semibold text-slate-700 mb-3 text-sm">Total Breakdown Over {values.years} Years</h5>
+          <div className="w-full h-8 bg-slate-200 rounded-full overflow-hidden flex">
             <div 
               className="h-full bg-blue-500" 
               style={{ width: `${(results.principal / results.totalPaid) * 100}%` }}
@@ -538,11 +560,11 @@ const MortgageCalculator = () => {
           <div className="flex justify-between text-sm mt-3">
              <div className="flex items-center gap-2">
                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-               <span className="text-slate-600">Principal ({Math.round((results.principal / results.totalPaid) * 100)}%)</span>
+               <span className="text-slate-600">Total Principal: <strong>${Math.round(results.principal).toLocaleString()}</strong></span>
              </div>
              <div className="flex items-center gap-2">
                <div className="w-3 h-3 rounded-full bg-rose-400"></div>
-               <span className="text-slate-600">Interest ({Math.round((results.totalInterest / results.totalPaid) * 100)}%)</span>
+               <span className="text-slate-600">Total Interest: <strong>${Math.round(results.totalInterest).toLocaleString()}</strong></span>
              </div>
           </div>
         </Card>

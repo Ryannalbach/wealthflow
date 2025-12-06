@@ -442,6 +442,8 @@ const MortgageCalculator = () => {
     rate: 6.5,
     years: 30
   });
+  const [useCustomPayment, setUseCustomPayment] = useState(false);
+  const [customPayment, setCustomPayment] = useState(null);
 
   const results = useMemo(() => {
     const principal = values.price - values.downPayment;
@@ -449,9 +451,14 @@ const MortgageCalculator = () => {
     const n = values.years * 12;
     
     // Mortgage Formula: M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
-    const monthlyPayment = r === 0 
+    let monthlyPayment = r === 0 
       ? principal / n 
       : principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    
+    // Override with custom payment if enabled
+    if (useCustomPayment && customPayment) {
+      monthlyPayment = customPayment;
+    }
       
     const totalPaid = monthlyPayment * n;
     const totalInterest = totalPaid - principal;
@@ -461,7 +468,7 @@ const MortgageCalculator = () => {
     const payoffDate = new Date(today.setMonth(today.getMonth() + n));
 
     return { monthlyPayment, totalInterest, totalPaid, principal, payoffDate };
-  }, [values]);
+  }, [values, useCustomPayment, customPayment]);
 
   const InputField = ({ label, value, field, prefix = null, suffix = null }) => (
     <div>
@@ -495,6 +502,33 @@ const MortgageCalculator = () => {
           </div>
           <InputField label="Interest Rate (APR)" value={values.rate} field="rate" suffix="%" />
           <InputField label="Loan Term (Years)" value={values.years} field="years" />
+          
+          <div className="border-t border-slate-200 pt-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useCustomPayment}
+                onChange={(e) => setUseCustomPayment(e.target.checked)}
+                className="w-4 h-4 accent-blue-500 rounded cursor-pointer"
+              />
+              <span className="text-sm font-semibold text-slate-700">Use Custom Monthly Payment</span>
+            </label>
+            {useCustomPayment && (
+              <div className="mt-3">
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Custom Monthly Payment</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+                  <input
+                    type="number"
+                    value={customPayment || ''}
+                    onChange={(e) => setCustomPayment(parseFloat(e.target.value) || null)}
+                    className="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Enter custom amount"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </Card>
       </div>
 

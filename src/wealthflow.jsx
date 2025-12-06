@@ -645,6 +645,13 @@ const MortgageCalculator = () => {
 
 export default function WealthFlowCalculator() {
   const [activeTab, setActiveTab] = useState('budget');
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const NavButton = ({ id, label, icon: Icon }) => (
     <button
@@ -661,7 +668,24 @@ export default function WealthFlowCalculator() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-800 font-sans p-4 md:p-8">
+    <div className="relative min-h-screen text-slate-800 font-sans overflow-x-hidden">
+      {/* Parallax Background */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&h=900&fit=crop)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          transform: `translateY(${scrollY * 0.5}px)`,
+        }}
+      >
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
+
+      {/* Content Wrapper */}
+      <div className="relative z-10 min-h-screen bg-white/95 backdrop-blur-sm p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Navigation Bar */}
@@ -691,6 +715,7 @@ export default function WealthFlowCalculator() {
           <p>© 2024 WealthFlow. Your data is stored locally.</p>
         </footer>
 
+      </div>
       </div>
     </div>
   );
